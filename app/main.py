@@ -8,7 +8,7 @@ app = FastAPI(title="Face Verification API")
 # Enable CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # React frontend origin
+    allow_origins=["*"],# React frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
