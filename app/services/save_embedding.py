@@ -1,23 +1,39 @@
-import json
-import os
+# import json
+# import os
+#
+# EMBEDDINGS_FILE = "data/face_embeddings.json"
+# os.makedirs("data", exist_ok=True)
+#
+# async def save_embedding(embedding: list[float], image_path: str, name: str,notes: str):
+#     # Load existing data if file exists
+#     data = []
+#     if os.path.exists(EMBEDDINGS_FILE):
+#         with open(EMBEDDINGS_FILE, "r") as f:
+#             data = json.load(f)
+#
+#     # Append new entry
+#     data.append({
+#         "embedding": embedding,
+#         "image_path": image_path,
+#         "id": name,
+#         "notes": notes
+#     })
+#
+#     # Save back to file
+#     with open(EMBEDDINGS_FILE, "w") as f:
+#         json.dump(data, f, indent=4)
 
-EMBEDDINGS_FILE = "data/face_embeddings.json"
-os.makedirs("data", exist_ok=True)
+# app/core/save_embedding.py
+from app.core.databse import db
 
-async def save_embedding(embedding: list[float], image_path: str, name: str):
-    # Load existing data if file exists
-    data = []
-    if os.path.exists(EMBEDDINGS_FILE):
-        with open(EMBEDDINGS_FILE, "r") as f:
-            data = json.load(f)
-
-    # Append new entry
-    data.append({
+async def save_embedding(embedding: list[float], image_path: str, name: str, notes: str):
+    collection = db["embeddings"]   # 👈 collection name
+    document = {
         "embedding": embedding,
         "image_path": image_path,
-        "name": name
-    })
+        "id": name,
+        "notes": notes
+    }
+    result = await collection.insert_one(document)
+    return str(result.inserted_id)
 
-    # Save back to file
-    with open(EMBEDDINGS_FILE, "w") as f:
-        json.dump(data, f, indent=4)
