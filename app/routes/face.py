@@ -9,8 +9,15 @@ from app.services.delete_embedding_by_id import delete_embedding_by_id;
 from fastapi import APIRouter, HTTPException
 from app.core.databse import db
 
+#............
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
+from datetime import datetime
+#............
 
-router = APIRouter(tags=["face"])  # remove prefix
+
+router = APIRouter(tags=["face"])
 
 @router.post("/verify")
 async def face_verify(img1: UploadFile = File(...), img2: UploadFile = File(...)):
@@ -53,7 +60,8 @@ async def get_all_embeddings():
         cursor = db.embeddings.find(
             {}, {"_id": 0, "id": 1, "image_path": 1, "notes": 1}
         )
-        data = await cursor.to_list(length=None)
+
+        data = [doc async for doc in cursor]
 
         if not data:
             raise HTTPException(status_code=404, detail="No embeddings found")
@@ -62,3 +70,31 @@ async def get_all_embeddings():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    #.....................from
+
+
+# Directory to save uploaded images
+SAVE_DIR = Path("uploaded_faces")
+SAVE_DIR.mkdir(exist_ok=True)
+
+@router.post("/verify-live")
+async def verify_face(image: UploadFile = File(...)):
+    try:
+        result = await one_to_n(image)
+        print("response realtime", result)
+        return result
+        # # Generate a unique filename with timestamp
+        # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # file_path = SAVE_DIR / f"{timestamp}_{image.filename}"
+        #
+        # # Read uploaded file content
+        # contents = await image.read()
+        # # Save to disk
+        # with open(file_path, "wb") as f:
+        #     f.write(contents)
+        #
+        # print(f"Saved file: {file_path}")  # Optional: for backend log
+        # print("live result--->>",result)
+        # return {"success": result.match, "file_path": str(result.image_path)}
+    except Exception as e:
+        return {"match": False, "error": str(e)}
