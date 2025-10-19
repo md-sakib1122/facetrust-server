@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import face,auth_route
+from app.routes import face,auth_route,attendance
 app = FastAPI(title="Face Verification API")
 
 
@@ -19,6 +19,7 @@ app.add_middleware(
 # Include face verification routes
 app.include_router(face.router, prefix="/face", tags=["Face Recognition"])
 app.include_router(auth_route.router, prefix="/auth", tags=["auth"])
+app.include_router(attendance.router, prefix="/attendance", tags=["attendance"])
 
 @app.get("/")
 def root():

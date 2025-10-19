@@ -81,7 +81,6 @@ SAVE_DIR.mkdir(exist_ok=True)
 async def verify_face(image: UploadFile = File(...)):
     try:
         result = await one_to_n(image)
-        print("response realtime", result)
         return result
         # # Generate a unique filename with timestamp
         # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

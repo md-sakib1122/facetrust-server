@@ -1,10 +1,48 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List
+from datetime import datetime
 
-class UserModel(BaseModel):
+class UserBase(BaseModel):
     name: str
     email: EmailStr
-    password: str
     role: str
     parent: Optional[str] = None
+    department: List[str] = Field(default_factory=list)
+    subdepartment: List[str] = Field(default_factory=list)
+    #employe base info
+    userDept: Optional[str] = None
+    userSubDept: Optional[str] = None
+    emp_id: Optional[str] = None
+    group_id: Optional[str] = None
+    company_id: Optional[str] = None
+    #emp base info
+
+class UserCreate(UserBase):
+    password: str
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    role: Optional[str] = None
+    parent: Optional[str] = None
+    department: Optional[List[str]] = None
+    subdepartment: Optional[List[str]] = None
+    password: Optional[str] = None
+
+# Schemas for the update endpoints
+class AddDepartmentModel(BaseModel):
+    id: str
+    department: str  # single string
+
+class SubDepartmentUpdate(BaseModel):
+    id: str
+    subdepartment: str
+
+class UserDB(UserBase):
+    id: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        from_attributes = True
 
