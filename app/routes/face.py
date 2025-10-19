@@ -1,6 +1,5 @@
 # face.py
 from fastapi import APIRouter, UploadFile, File , Form
-from app.services.face_service import verify_faces
 from app.services.make_embade import get_face_embedding
 from app.services.save_embedding import save_embedding
 from app.services.one_to_n import one_to_n
@@ -19,10 +18,7 @@ from datetime import datetime
 
 router = APIRouter(tags=["face"])
 
-@router.post("/verify")
-async def face_verify(img1: UploadFile = File(...), img2: UploadFile = File(...)):
-    result = await verify_faces(img1, img2)
-    return result
+
 
 @router.post("/one-one")
 async def one_one(img1: UploadFile = File(...), img2: UploadFile = File(...)):
