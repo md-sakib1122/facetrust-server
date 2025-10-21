@@ -1,5 +1,6 @@
 from jose import jwt, JWTError, ExpiredSignatureError
 from datetime import datetime, timedelta
+from typing import Optional
 import os
 from dotenv import load_dotenv
 
@@ -12,7 +13,8 @@ EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))  # default 
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY must be set in .env")
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """
     Create a JWT access token with expiration.
     """
@@ -22,15 +24,16 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
-def verify_token(token: str) -> dict | None:
+
+def verify_token(token: str) -> Optional[dict]:
     """
-    Verify a JWT token.
-    Returns payload dictionary if valid, None if invalid.
+    Verify a JWT token and return payload if valid.
+    Returns None if invalid, or {"error": "..."} for specific issues.
     """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         if payload.get("type") != "access":
-            return None
+            return {"error": "Invalid token type"}
         return payload
     except ExpiredSignatureError:
         return {"error": "Token expired"}

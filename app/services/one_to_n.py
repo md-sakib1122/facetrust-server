@@ -13,8 +13,9 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 
-async def one_to_n(img1: UploadFile):
+async def one_to_n(img1: UploadFile,company_id: str):
     try:
+        print("company_id",company_id)
         # Read image bytes
         img_bytes = await img1.read()
         np_img = np.frombuffer(img_bytes, np.uint8)
@@ -29,7 +30,7 @@ async def one_to_n(img1: UploadFile):
 
         # Fetch embeddings from MongoDB
         cursor = db.embeddings.find(
-            {}, {"id": 1, "embedding": 1, "image_path": 1, "notes": 1}
+           {"company_id": company_id}, {"id": 1, "embedding": 1, "image_path": 1, "notes": 1}
         )
         data = await cursor.to_list(length=None)
 

@@ -29,7 +29,6 @@ async def get_all_companies_by_parent(parent_id: str):
 
 
 async def get_single_company(company_id: str):
-
     try:
         collection = db["users"]
         cursor = collection.find({"_id": ObjectId(company_id)})

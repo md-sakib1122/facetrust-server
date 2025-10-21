@@ -33,8 +33,9 @@ async def save_embed(img1: UploadFile = File(...), file_path: str = Form(...),na
 
 
 @router.post("/one-to-n")
-async def one_to_n_route(img1: UploadFile = File(...)):
-    result = await one_to_n(img1)
+async def one_to_n_route(img1: UploadFile = File(...),company_id: str = Form(...) ):
+    print("company_id", company_id)
+    result = await one_to_n(img1,company_id)
     return result
 
 
@@ -77,9 +78,10 @@ SAVE_DIR = Path("uploaded_faces")
 SAVE_DIR.mkdir(exist_ok=True)
 
 @router.post("/verify-live")
-async def verify_face(image: UploadFile = File(...)):
+async def verify_face(image: UploadFile = File(...),company_id: str = Form(...)):
     try:
-        result = await one_to_n(image)
+        print("company_id", company_id)
+        result = await one_to_n(image,company_id)
         return result
         # # Generate a unique filename with timestamp
         # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
