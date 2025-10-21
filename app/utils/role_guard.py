@@ -14,10 +14,13 @@ def get_current_user(request: Request):
     print("this is payload",payload)
     return payload
 
-# Role-based dependency
-def require_role(role: str):
+def require_role(roles: list[str]):
     def role_checker(user=Depends(get_current_user)):
-        if user.get("role") != role:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Forbidden: requires {role} role")
+        user_role = user.get("role")
+        if user_role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Forbidden: requires one of {roles} roles"
+            )
         return user
     return role_checker

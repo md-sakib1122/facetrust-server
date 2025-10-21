@@ -26,9 +26,9 @@ async def one_one(img1: UploadFile = File(...), img2: UploadFile = File(...)):
     return result
 
 @router.post("/save-embed")
-async def save_embed(img1: UploadFile = File(...), file_path: str = Form(...),name: str = Form(...),notes: str = Form(...)):
+async def save_embed(img1: UploadFile = File(...), file_path: str = Form(...),name: str = Form(...),notes: str = Form(...), company_id :str = Form(...)):
     result = await get_face_embedding(img1)
-    await  save_embedding(result,file_path,name,notes)
+    await  save_embedding(result,file_path,name,notes,company_id)
     return {"message": "Embedding saved successfully"}
 
 
@@ -50,17 +50,20 @@ async def delete_embedding(user_id: str):
 
 
 
-@router.get("/embeddings")
-async def get_all_embeddings():
+@router.post("/embeddings")
+async def get_all_embeddings(data: dict):
     try:
+        company_id = data["company_id"]
+        print("Company ID:", company_id)
         cursor = db.embeddings.find(
-            {}, {"_id": 0, "id": 1, "image_path": 1, "notes": 1}
+            {"company_id": company_id},  # 🟢 filter
+            {"_id": 0, "id": 1, "image_path": 1, "notes": 1}  # 🟢 projection
         )
 
         data = [doc async for doc in cursor]
 
         if not data:
-            raise HTTPException(status_code=404, detail="No embeddings found")
+            return {"count": len(data), "embeddings": data}
 
         return {"count": len(data), "embeddings": data}
 

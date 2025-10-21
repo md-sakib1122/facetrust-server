@@ -23,9 +23,19 @@ async def create_user(data: dict):
             "email": data["email"],
             "password": hashed_pw,
             "role": data["role"],
+            #company
             "parent": data.get("parent"),
             "department": [],
             "subdepartment": [],
+            "company_code": data.get("company_code"),
+            "address": data.get("address"),
+            "city": data.get("city"),
+            "fax":data.get("fax"),
+            "phone": data.get("phone"),
+            "tax_no": data.get("tax_no"),
+            "country": data.get("country"),
+            "abbreviate_name": data.get("abbreviate_name"),
+            #company
             "createdAt": datetime.utcnow(),
             "updatedAt": datetime.utcnow(),
         }

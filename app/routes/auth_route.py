@@ -4,7 +4,8 @@ from bson import ObjectId
 from app.services.user.user_service import create_user
 from app.models.signInModel import SignInModel
 from app.services.user.sign_in_service import sign_in_user
-from app.services.user.get_all_company import get_all_companies_by_parent
+from app.services.user.sign_out_service import sign_out_user
+from app.services.user.get_all_company import get_all_companies_by_parent,get_single_company
 from app.utils.role_guard import get_current_user
 from app.utils.role_guard import require_role
 from app.services.user.get_all_employee_by_companyId import get_all_employee_by_company_id
@@ -18,6 +19,21 @@ async def add_group(user: UserCreate):
         return {"message": "group created successfully", "id": user_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/signin")
+async def sign_in(data: SignInModel, response: Response):
+    print("hit korche",data)
+    try:
+        result = await sign_in_user(data.model_dump(),response)
+        return result
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/sign_out")
+async def sign_out(response: Response):
+    return await sign_out_user(response)
 
 @router.post("/create-company")  # company signup
 async def add_company(company: UserCreate):
@@ -82,12 +98,16 @@ async def add_subdepartment(data: SubDepartmentUpdate):
 
 
 @router.get("/all-company")
-async def get_all_company(user=Depends(require_role("group"))):
+async def get_all_company(user=Depends(require_role(["group","company"]))):
     try:
         parent_id = user["user_id"]
         print("parent_id>>", parent_id)
         companies = []
-        companies = await get_all_companies_by_parent(parent_id)
+        if user["role"] == "group":
+            companies = await get_all_companies_by_parent(parent_id)
+        if user["role"] == "company":
+            companies = await get_single_company(parent_id)
+        print("companies>>", companies)
         return companies
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -108,15 +128,7 @@ async def get_all_employee(
 
 
 
-@router.post("/signin")
-async def sign_in(data: SignInModel, response: Response):
-    print("hit korche",data)
-    try:
-        result = await sign_in_user(data.model_dump(),response)
-        return result
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 

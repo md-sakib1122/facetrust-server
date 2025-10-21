@@ -6,9 +6,19 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
     role: str
+    # company
     parent: Optional[str] = None
     department: List[str] = Field(default_factory=list)
     subdepartment: List[str] = Field(default_factory=list)
+    company_code: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    fax: Optional[str] = None
+    phone: Optional[str] = None
+    tax_no: Optional[str] = None
+    country: Optional[str] = None
+    abbreviate_name: Optional[str] = None
+    #company
     #employe base info
     userDept: Optional[str] = None
     userSubDept: Optional[str] = None

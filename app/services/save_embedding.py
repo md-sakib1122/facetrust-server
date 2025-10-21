@@ -26,13 +26,14 @@
 # app/core/save_embedding.py
 from app.core.databse import db
 
-async def save_embedding(embedding: list[float], image_path: str, name: str, notes: str):
+async def save_embedding(embedding: list[float], image_path: str, name: str, notes: str , company_id: str):
     collection = db["embeddings"]   # 👈 collection name
     document = {
         "embedding": embedding,
         "image_path": image_path,
         "id": name,
-        "notes": notes
+        "notes": notes,
+        "company_id": company_id,
     }
     result = await collection.insert_one(document)
     return str(result.inserted_id)
