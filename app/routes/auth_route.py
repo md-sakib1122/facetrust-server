@@ -10,6 +10,7 @@ from app.utils.role_guard import get_current_user
 from app.utils.role_guard import require_role
 from app.services.user.get_all_employee_by_companyId import get_all_employee_by_company_id
 from app.core.databse import db
+from app.services.user.get_single_user_service import get_user_by_id
 router = APIRouter(tags=["auth"])
 
 @router.post("/signup")  # group signup
@@ -127,11 +128,6 @@ async def get_all_employee(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
-
-
-
 @router.get("/me")
 async def get_me(current_user: dict = Depends(get_current_user)):
     return {
@@ -139,4 +135,11 @@ async def get_me(current_user: dict = Depends(get_current_user)):
         "email": current_user["email"],
         "role": current_user["role"]
     }
+
+@router.get("/single-user")
+async def get_single_user(user_id: str):
+    print(user_id)
+    user =await get_user_by_id(user_id)
+    return user
+
 

@@ -21,5 +21,7 @@ async def track_and_save(data:dict):
 async def attendance_report(req: AttendanceRequest):
     start = datetime.datetime.strptime(req.start_date, "%Y-%m-%d").date()
     end = datetime.datetime.strptime(req.end_date, "%Y-%m-%d").date()
+    print("emp id:",req.emp_id)
     data = await get_attendance(req.emp_id, start, end)
+    print("returned data",data)
     return data
